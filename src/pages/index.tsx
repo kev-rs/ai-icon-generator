@@ -34,7 +34,7 @@ const Home: NextPage = () => {
           <Image
             className="rounded-xl shadow-md drop-shadow-md"
             /* eslint-disable */
-            src={img.iconskev}
+            src={'https://res.cloudinary.com/kev-tsx/image/upload/v1677455794/lout3chq5whmvpkovarr.png'}
             alt="img"
             width={800}
             height={100}
@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         <Image
           // className="animate-[flow_1s_ease-in-out_infinite]"
           className="relative animate-flow"
-          src={img.bot}
+          src={'https://res.cloudinary.com/kev-tsx/image/upload/v1677455852/pnr6kcxxxbgxjq5m8okm.png'}
           alt="img"
           width={200}
           height={100}

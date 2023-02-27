@@ -1,5 +1,3 @@
-import * as bot from './bot.png';
-import * as iconskev from './iconskev.png';
 import * as userIcon from './user.svg';
 import * as cloud from './cloud.svg';
 import * as config from './config.svg';
@@ -13,8 +11,6 @@ import * as saveMoney from './dizzy-payment-card-with-coins.svg';
 
   /* eslint-disable */
 export const asset = {
-  bot: bot.default.src,
-  iconskev: iconskev.default.src,
   userIcon: userIcon.default,
   cloud: cloud.default,
   config: config.default,
