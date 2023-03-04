@@ -8,7 +8,8 @@ import * as share from './share.svg';
 import * as customize from './customize.svg';
 import * as download from './download.svg';
 import * as saveMoney from './dizzy-payment-card-with-coins.svg';
-
+import { iconStyles } from './icon-styles/index';
+import { iconShapes } from './icon-shapes/index';
   /* eslint-disable */
 export const asset = {
   userIcon: userIcon.default,
@@ -21,4 +22,6 @@ export const asset = {
   customize: customize.default,
   download: download.default,
   saveMoney: saveMoney.default,
+  iconStyles,
+  iconShapes
 };

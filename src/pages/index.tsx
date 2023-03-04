@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { RootLayout } from '@layouts';
 import Image from "next/image";
 import { Arrow } from "@/components";
-import { asset as img } from '@assets';
 import { info, usersFeedback, benefits } from "@/data/info";
 
 const Home: NextPage = () => {
