@@ -7,6 +7,7 @@ import * as loop from './loop.svg';
 import * as share from './share.svg';
 import * as customize from './customize.svg';
 import * as download from './download.svg';
+import * as downloadImg from './downloadImg.svg';
 import * as saveMoney from './dizzy-payment-card-with-coins.svg';
 import { iconStyles } from './icon-styles/index';
 import { iconShapes } from './icon-shapes/index';
@@ -21,6 +22,7 @@ export const asset = {
   share: share.default,
   customize: customize.default,
   download: download.default,
+  downloadImg: downloadImg.default,
   saveMoney: saveMoney.default,
   iconStyles,
   iconShapes

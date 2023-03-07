@@ -24,7 +24,7 @@ export const Navbar = () => {
 
       <div className='flex gap-5'>
         <Link href="/generate">Generate</Link>
-        <h1>Collection</h1>
+        <Link href='/collection'>Collection</Link>
       </div>
 
       <div className='flex gap-20'>

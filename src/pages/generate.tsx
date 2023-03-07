@@ -9,14 +9,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from "zod";
 
 const formValues = z.object({
-  prompt: z.string().min(1),
-  color: z.string().min(1),
-  iconStyle: z.string().min(1),
-  iconShape: z.string().min(1),
-  imgs: z.number().min(1).default(1)
+  prompt: z.string(),
+  color: z.string(),
+  iconStyle: z.string(),
+  iconShape: z.string(),
+  imgs: z.string()
 })
 
-type FormValues = z.infer<typeof formValues>;
+export type FormValues = z.infer<typeof formValues>;
 
 type Res = {
   data: {
@@ -39,42 +39,46 @@ const colors = [
   { name: 'silver', hex: '#c0c0c0' },
 ]
 
-const Generate = () => {
-
-  const { register, formState: { errors }, handleSubmit, setValue } = useForm<FormValues>({ 
-    mode: 'all', 
+const Generate: React.FC = () => {
+  const { register, handleSubmit, setValue } = useForm<FormValues>({ 
+    mode: 'all',
+    shouldFocusError: true,
     resolver: zodResolver(formValues)
   });
-
-  const mutation = useMutation(async (input: FormValues) => {
-
-    const res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: input,
+  
+  const mutation = useMutation( async (input: FormValues) => {
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: input,
+        })
+      });
+      
+      if (!res.ok) throw new Error('Bad response', {
+        cause: res
       })
-    });
 
-    const imgs = await res.json() as Res;
-
-    return imgs.data;
+      const imgs = await res.json() as Res;  
+      return imgs.data;
+    } catch (err) {
+      console.log(err);      
+    }
   });
 
   const [imgs, setImgs] = useState<Res['data']>();
-  
 
   const handlePrompt: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
-    // mutation.mutate(data, {
-    //   onSuccess: (v) => {
-    //     setImgs(v);
-    //     setText('');
-    //   }
-    // });
-  }
+    mutation.mutate(data, {
+      onSuccess: (v) => {
+        setImgs(v);
+      }
+    });
+  };
+
   return (
     <RootLayout>
       <div className="flex justify-center">
@@ -85,7 +89,9 @@ const Generate = () => {
           className="flex flex-col items-start gap-10"
         >
           <h2 className="text-center text-4xl font-bold">{"Let's generate your icon."}</h2>
-          <label htmlFor="" className="flex flex-col gap-5">
+
+          {/* Prompt */}
+          <label className="flex flex-col gap-5">
             <p className="">1. Describe your icon using a noun and adjective </p>
             <input
               type='text'
@@ -95,35 +101,31 @@ const Generate = () => {
             />
           </label>
 
-          <label htmlFor="" className="flex flex-col gap-5">
+          {/* Color */}
+          <label className="flex flex-col gap-5">
             <p className="">2. Select a primary color for your icon</p>
             <div className="grid grid-cols-4 gap-4">
               {
                 colors.map((c, i) => {
-                  const box = i + 1;
                   return (
                     <div key={i}>
                       <div
-                        id={`${box}`}
                         style={{ backgroundColor: c.hex }}
                         className={clsx(
-                          "p-10 rounded-md  transition-all", {
-                            // "hover:-translate-y-2 hover:translate-x-1": `${box}` !== selected.color,
-                            // "absolute top-[85%] left-[55%] p-[8%] shadow-lg": `${box}` === selected.color,
-                          }
+                          "p-10 rounded-md  transition-all"
                         )}
-                        {...register('color'), { onClick: () => {
-                          setValue('color', c.hex)
-                        } }}
-                        // onClick={() => setSelected(prev => ({ ...prev, color: `${box}`}))}
+                        onClick={() => {
+                          setValue('color', c.hex);
+                        }}
                       ></div>
                     </div>
                   )
-                }
-                )}
+                })
+              }
             </div>
           </label>
-
+          
+          {/* Icon Styles */}
           <label className="flex flex-col gap-5">
             <h3 className="text-xl font-bold">3. Select a style for your icon</h3>
             <div className="grid grid-cols-4 gap-4">
@@ -132,19 +134,13 @@ const Generate = () => {
                   return (
                     <div 
                       key={key}
-                      // onClick={() => setSelected(prev => ({ ...prev, style: `${box}`}))}
-                      {...register('iconStyle'), { onClick: () => {
-                        setValue('iconStyle', key)
-                      } }}
-                      className={clsx(
-                        // {"flex flex-col-reverse gap-4 justify-center items-center absolute right-[29%] top-[138%] w-[15%] transition-all": `${box}` === selected.style}
-                      )}
+                      onClick={() => {
+                        setValue('iconStyle', key);
+                      }}
                     >
                       <Image                      
                         className={clsx(
-                          "rounded-md shadow-md", {
-                            // "w-full transition-all": `${box}` === selected.style,
-                          }
+                          "rounded-md shadow-md"
                         )}
                         alt="img"
                         src={value}
@@ -158,8 +154,9 @@ const Generate = () => {
               }
             </div>
           </label>
-
-          <label htmlFor="" className="flex flex-col gap-5">
+          
+          {/* Icon Shape */}
+          <label className="flex flex-col gap-5">
             <p className="">4. Select the shape of your icon</p>
             <div className="grid grid-cols-4 gap-4">
               {
@@ -167,19 +164,15 @@ const Generate = () => {
                   return (
                     <div 
                       key={key}
-                      // onClick={() => setSelected(prev => ({ ...prev, shape: `${box}`}))}
-                      {...register('iconShape'), { onClick: () => {
-                        setValue('iconShape', key)
-                      } }}
+                      onClick={() => {
+                        setValue('iconShape', key);
+                      }}
                       className={clsx(
-                        // {"flex flex-col-reverse gap-4 justify-center items-center absolute right-[29%] top-[185%] w-[15%] transition-all": `${box}` === selected.shape}
                       )}
                     >
                       <Image                      
                         className={clsx(
-                          "rounded-md shadow-md", {
-                            // "w-full transition-all": `${box}` === selected.shape,
-                          }
+                          "rounded-md shadow-md"
                         )}
                         alt="img"
                         src={value}
@@ -194,18 +187,21 @@ const Generate = () => {
             </div>
           </label>
 
-          <label htmlFor="" className="flex flex-col gap-5">
+          {/* Number of Images */}
+          <label className="flex flex-col gap-5">
             <p className="">5. How many images do you want (1 credit per image)</p>
             <input
-              type='number'
-              value={1}
-              // onChange={(e) => handleChange(e)}
-              {...register('imgs')}
+              type='text'
+              {...register('imgs', {
+                onChange: () => {
+                  console.log('changed')
+                }
+              })}
               className="bg-transparent rounded-md w-full p-2 mt-2 border-2 border-rose-500 outline-2 outline-cyan-500"
             />
           </label>
 
-          <button type='submit' className="bg-blue-500 text-white p-2 rounded-md">Submit</button>
+          <button type='submit' className="bg-blue-500 text-white p-2 rounded-md w-full">Submit</button>
         </form>
         <div>
           {
@@ -213,6 +209,7 @@ const Generate = () => {
               return (
                 <div key={i}>
                   <Image
+                    className="w-full rounded-3xl"
                     alt="img"
                     src={img.url}
                     width={100}
@@ -221,8 +218,7 @@ const Generate = () => {
                   />
                 </div>
               )
-            }
-            )
+            })
           }
         </div>
       </div>
@@ -230,4 +226,4 @@ const Generate = () => {
   )
 }
 
-export default Generate
+export default Generate;
