@@ -8,6 +8,7 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(req: NextApiRequest,res: NextApiResponse) {
@@ -27,10 +28,7 @@ export default async function handler(req: NextApiRequest,res: NextApiResponse) 
     });
 
     const url = response.data.data[0]?.url;
-    // const url2 = response.data.data[0]?.b64_json;
-    // console.log({kevURL: url2});
     
-
     const res_upload = await fetch('http://localhost:3000/api/upload', {
       method: 'POST',
       headers: {

@@ -40,6 +40,8 @@ const colors = [
 ]
 
 const Generate: React.FC = () => {
+  const [imgs, setImgs] = useState<Res['data']>();
+
   const { register, handleSubmit, setValue } = useForm<FormValues>({ 
     mode: 'all',
     shouldFocusError: true,
@@ -69,7 +71,6 @@ const Generate: React.FC = () => {
     }
   });
 
-  const [imgs, setImgs] = useState<Res['data']>();
 
   const handlePrompt: SubmitHandler<FormValues> = (data) => {
     mutation.mutate(data, {
