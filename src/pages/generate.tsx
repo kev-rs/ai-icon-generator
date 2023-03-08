@@ -7,6 +7,8 @@ import { asset } from "@/assets";
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from "zod";
+import { useSession } from "next-auth/react";
+import { api } from "@/utils/api";
 
 const formValues = z.object({
   prompt: z.string(),
@@ -40,7 +42,9 @@ const colors = [
 ]
 
 const Generate: React.FC = () => {
+  const session = useSession();
   const [imgs, setImgs] = useState<Res['data']>();
+  const user = api.auth.getUser.useQuery();
 
   const { register, handleSubmit, setValue } = useForm<FormValues>({ 
     mode: 'all',
@@ -73,6 +77,12 @@ const Generate: React.FC = () => {
 
 
   const handlePrompt: SubmitHandler<FormValues> = (data) => {
+    if (!user.data) return;
+
+    if (user.data.credits < 1) {
+      return;
+    }
+
     mutation.mutate(data, {
       onSuccess: (v) => {
         setImgs(v);
@@ -202,7 +212,16 @@ const Generate: React.FC = () => {
             />
           </label>
 
-          <button type='submit' className="bg-blue-500 text-white p-2 rounded-md w-full">Submit</button>
+          <button 
+            type='submit'
+            className={clsx(
+              "text-white p-2 rounded-md w-full cursor-pointer",
+              { 
+                "bg-emerald-400 before:content-['Generate'] before:flex before:justify-center": session.status === "authenticated",
+                "bg-slate-800 before:content-['Sign in to start'] before:flex before:justify-center": session.status !== "authenticated",
+              }
+            )}
+          />
         </form>
         <div>
           {

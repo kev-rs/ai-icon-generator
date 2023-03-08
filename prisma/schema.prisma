@@ -14,6 +14,36 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model CreditsPayment {
+    id            String    @id @default(cuid())
+    amount        Int       @default(100)
+    receipt_email String
+    paidOut       Boolean   @default(false)
+    paidAt        DateTime?
+    userId        String
+    user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id             String           @id @default(cuid())
+    name           String?
+    email          String?          @unique
+    emailVerified  DateTime?
+    image          String?
+    accounts       Account[]
+    sessions       Session[]
+    generatedImgs  GeneratedImg[]
+    credits        Int              @default(1)
+    paymentCredits CreditsPayment[]
+}
+
+model GeneratedImg {
+    id     String @id @default(cuid())
+    image  String
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model Example {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -45,24 +75,6 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-    id            String         @id @default(cuid())
-    name          String?
-    email         String?        @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    generatedImgs GeneratedImg[]
-}
-
-model GeneratedImg {
-    id     String @id @default(cuid())
-    image  String
-    userId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

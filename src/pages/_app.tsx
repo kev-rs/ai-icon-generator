@@ -14,7 +14,7 @@ import { useState } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps }}) => {
 
-  const [queryClient] = useState(() => new QueryClient());
+  const [ queryClient ] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>

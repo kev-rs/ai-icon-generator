@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Bot, ThemeMode } from '@ui';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import clsx from 'clsx';
-// aww.default
+import { useStore } from '@/hooks/store';
+
 export const Navbar = () => {
+
+  // const { getState } = useStore();
+  // const { credits } = getState();
+  const { credits, pay } = useStore()();
 
   const [ mode, setMode ] = useState<'light' | 'dark'>('dark');
   const router = useRouter(); 
@@ -29,12 +34,13 @@ export const Navbar = () => {
 
       <div className='flex gap-20'>
         <div className='flex items-center gap-4'>
-          <p>0 credits</p>
+          <p>{credits} credits</p>
           <button
             className={clsx(
               "bg-blue-500 text-white rounded-md px-4 py-2",
               { "hidden": session.status !== "authenticated" }
             )}
+            onClick={() => pay()}
           >Buy credits</button>
           <button
             className={clsx(

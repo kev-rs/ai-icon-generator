@@ -3,9 +3,11 @@ import { RootLayout } from '@layouts';
 import Image from "next/image";
 import { Arrow } from "@/components";
 import { info, usersFeedback, benefits } from "@/data/info";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
-
+  const router = useRouter();
+  
   return (
     <RootLayout>
       <div className="flex justify-center items-center">
@@ -19,6 +21,9 @@ const Home: NextPage = () => {
           <div className="">
             <button
               className="uppercase bg-cyan-400 text-gray-900 p-4 rounded-md shadow-md drop-shadow-md font-mono"
+              /* eslint-disable */
+              onClick={() => router.push('/generate')}
+              /* eslint-enable */
             >Get started</button>
 
             <div className="ml-20 mt-2">
@@ -56,6 +61,7 @@ const Home: NextPage = () => {
         </div>
       </div>
 
+      {/* Info */}
       <div className="grid grid-cols-3 gap-10">
         {
           info.map((item, index) => (
@@ -77,7 +83,8 @@ const Home: NextPage = () => {
           ))
         }        
       </div>
-
+      
+      {/* Users feedback */}
       <div className="mt-40 flex flex-col items-center">
         <h3 className="text-center text-4xl font-mono mb-10">What our users are saying</h3>
 
@@ -98,7 +105,8 @@ const Home: NextPage = () => {
           ))}
         </div>
       </div>
-
+      
+      {/* The Benefits of Generated Icons */}
       <div className="mt-20 flex justify-center">
         <div className="w-[50%]">
           <h3 className="text-center text-4xl mb-4">The Benefits of Generated Icons</h3>

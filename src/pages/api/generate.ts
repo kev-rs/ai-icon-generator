@@ -17,6 +17,16 @@ export default async function handler(req: NextApiRequest,res: NextApiResponse) 
 
   if (!session || !session.user.email) return res.status(401).json({ error: 'UNAUTHORIZED' });
 
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { generatedImgs: true, credits: true, email: true }
+  });
+
+  if (!user) return res.status(404).json({ error: 'NOT_FOUND' });
+  if (user.email !== session.user.email) return res.status(401).json({ error: 'UNAUTHORIZED' });
+
+  if (user.credits < 1) return res.status(401).json({ error: 'NOT_ENOUGH_CREDITS' });
+
   const prompt = `${data.prompt}, with a background color of ${data.color}, with a style of ${data.iconStyle}, and a shape of ${data.iconShape}`;
 
   try {
@@ -38,14 +48,7 @@ export default async function handler(req: NextApiRequest,res: NextApiResponse) 
     });
 
     if (!res_upload.ok) return res.status(400).json({ error: 'error uploading image to cloudinary' });
-    const data = await res_upload.json() as { url: string };
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: { generatedImgs: true }
-    });
-
-    if (!user) return res.status(401).json({ error: 'UNAUTHORIZED' });
+    const data = await res_upload.json() as { url: string };    
 
     await prisma.user.update({
       where: {
@@ -54,8 +57,10 @@ export default async function handler(req: NextApiRequest,res: NextApiResponse) 
       data: {
         generatedImgs: {
           create: [
+            /* eslint-disable */
             ...user.generatedImgs,
             { image: data.url }
+            /* eslint-enable */
           ]
         }
       }
