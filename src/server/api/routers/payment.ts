@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs';
-import { createTRPCRouter, publicProcedure } from '../trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 import Stripe from "stripe";
 import { z } from 'zod';
 
@@ -16,7 +16,8 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
 /* eslint-enable */
 
 export const paymentRouter = createTRPCRouter({
-  createCheckout: publicProcedure.mutation(async () => {
+  createCheckout: protectedProcedure.mutation(async ({ ctx }) => {
+    const user_email = ctx.session.user.email as string;
     /*eslint-disable */
     const ch = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -27,11 +28,12 @@ export const paymentRouter = createTRPCRouter({
           quantity: 100,
           adjustable_quantity: {
             minimum: 100,
-            maximum: 600,
+            maximum: 500,
             enabled: true,
           },
         },
       ],
+      customer_email: user_email,
       currency: 'usd',
       success_url: `${env.HOST_NAME}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${env.HOST_NAME}/`,

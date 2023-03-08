@@ -7,7 +7,7 @@ import { create } from 'zustand';
 interface Store {
   credits: number;
   pay: () => void;
-}
+};
 
 const useStoreCreated = () => {
   const user = api.auth.getUser.useQuery();

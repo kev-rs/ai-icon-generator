@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe, { type Stripe as Str } from "stripe";
 import { prisma } from "@/server/db";
 import { buffer } from 'micro';
-import { getServerAuthSession } from "@/server/auth";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
@@ -55,7 +54,7 @@ const webhook = async (req: NextApiRequest, res: NextApiResponse) => {
     // case 'payment_intent.succeeded':
     case 'charge.succeeded':
       const paymentIntent = event.data.object as PaymentCheck;
-      const total = paymentIntent.amount / 100;
+      const totalPaid = paymentIntent.amount / 100;
 
       const user = await prisma.user.findUnique({
         where: { email: paymentIntent.billing_details.email },
@@ -66,22 +65,25 @@ const webhook = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(404).json({ error: "Your email, and the email provided on the payment checkout don't match" });
         break;
       }
-      
 
       /* eslint-disable */
-      await prisma.creditsPayment.create({
+      await prisma.user.update({
+        where: { email: paymentIntent.billing_details.email },
         data: {
-          receipt_email: paymentIntent.billing_details.email,
-          amount: total,
-          paidAt: new Date(paymentIntent.created),
-          paidOut: paymentIntent.paid && paymentIntent.status === "succeeded",
-          user: {
-            connect: {
-              email: paymentIntent.billing_details.email
+          credits: {
+            increment: ((totalPaid / 5) * 100)
+          },
+          paymentCredits: {
+            create: {
+              amount: totalPaid,
+              paidAt: new Date(paymentIntent.created),
+              paidOut: paymentIntent.paid && paymentIntent.status === "succeeded",
+              receipt_email: paymentIntent.billing_details.email,
             }
           }
-        },
+        }
       });
+
       /* eslint-enable */
       console.log('PaymentIntent was successful!', paymentIntent);
       break;

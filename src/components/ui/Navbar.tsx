@@ -6,10 +6,8 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import { useStore } from '@/hooks/store';
 
-export const Navbar = () => {
+export const Navbar: React.FC = () => {
 
-  // const { getState } = useStore();
-  // const { credits } = getState();
   const { credits, pay } = useStore()();
 
   const [ mode, setMode ] = useState<'light' | 'dark'>('dark');
