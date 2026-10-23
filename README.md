@@ -1,28 +1,19 @@
-# Create T3 App
+# AI Icon Generator
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A web app that makes app and website icons with AI. You describe the icon, pick a color, style (flat, clay, pixel art and more) and shape, and the app generates it and saves it to your collection.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Sign in with Google** (NextAuth)
+- **Credits:** each new account gets 1 free icon, and you can buy more through **Stripe** checkout, with a webhook that adds the credits after payment
+- **AI image generation** with OpenAI's image API
+- **Image storage** on Cloudinary, plus a **PostgreSQL** database (Prisma) for users, icons and payments
+- Deployed on **Vercel**
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Status
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+Unfinished hobby project from 2023. The site is still up at [ai-icon-generator.vercel.app](https://ai-icon-generator.vercel.app), but generating icons there is broken: after creating an image, the app sends it to `localhost` for upload, and that address only works on the computer it was built on, not on the server.
 
-## Learn More
+## Built with
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Next.js, TypeScript, tRPC, Prisma, PostgreSQL, NextAuth, Stripe, OpenAI, Cloudinary, Tailwind CSS, Docker (local database).
